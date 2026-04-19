@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { categories, brands, products } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
+import BrandLogo from "@/components/BrandLogo";
 
 export default function HomePage() {
   const featured = products.slice(0, 4);
@@ -187,18 +188,7 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             {brands.map((b) => (
-              <Link
-                key={b.slug}
-                href={`/produtos?marca=${b.slug}`}
-                className="bg-white border border-[var(--color-border)] rounded-lg p-4 text-center hover:border-[var(--color-brand)] transition-all"
-              >
-                <div className="font-bold text-[var(--color-brand-dark)]">
-                  {b.name}
-                </div>
-                <div className="text-xs text-[var(--color-muted)]">
-                  {b.country}
-                </div>
-              </Link>
+              <BrandLogo key={b.slug} brand={b} />
             ))}
           </div>
         </div>
