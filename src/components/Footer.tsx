@@ -1,15 +1,14 @@
 import Link from "next/link";
 import { categories, brands } from "@/lib/data";
+import Logo from "./Logo";
 
 export default function Footer() {
   return (
     <footer className="bg-[var(--color-brand-dark)] text-white mt-16">
       <div className="max-w-7xl mx-auto px-4 py-12 grid gap-8 md:grid-cols-4">
         <div>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-10 h-10 rounded-lg bg-white text-[var(--color-brand-dark)] flex items-center justify-center font-bold">
-              LT
-            </div>
+          <div className="flex items-center gap-3 mb-3">
+            <Logo size={48} variant="white" />
             <div className="font-bold text-lg">LIDERTESTES</div>
           </div>
           <p className="text-sm text-white/80">

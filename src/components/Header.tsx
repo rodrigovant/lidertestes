@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "./Logo";
 
 const navItems = [
   { href: "/produtos", label: "Produtos" },
@@ -21,10 +22,8 @@ export default function Header() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-lg bg-[var(--color-brand)] text-white flex items-center justify-center font-bold text-lg">
-            LT
-          </div>
+        <Link href="/" className="flex items-center gap-3">
+          <Logo size={44} />
           <div>
             <div className="font-bold text-lg leading-tight text-[var(--color-brand-dark)]">
               LIDERTESTES
