@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { type Product, formatPrice, getBrand } from "@/lib/data";
+import ProductImage from "./ProductImage";
 
 export default function ProductCard({ product }: { product: Product }) {
   const brand = getBrand(product.brand);
@@ -8,8 +9,8 @@ export default function ProductCard({ product }: { product: Product }) {
       href={`/produtos/${product.slug}`}
       className="group bg-white border border-[var(--color-border)] rounded-lg overflow-hidden hover:shadow-lg hover:border-[var(--color-brand)] transition-all"
     >
-      <div className="aspect-square bg-gradient-to-br from-[var(--color-brand-light)] to-white flex items-center justify-center text-6xl">
-        📟
+      <div className="aspect-square bg-white overflow-hidden">
+        <ProductImage product={product} sizes="(max-width: 768px) 50vw, 25vw" />
       </div>
       <div className="p-4">
         <div className="flex items-center justify-between mb-2">

@@ -8,6 +8,7 @@ import {
   products,
 } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
+import ProductImage from "@/components/ProductImage";
 
 export async function generateStaticParams() {
   return products.map((p) => ({ slug: p.slug }));
@@ -55,8 +56,12 @@ export default async function ProdutoPage({
 
       <div className="grid lg:grid-cols-2 gap-10 mb-16">
         <div>
-          <div className="aspect-square bg-gradient-to-br from-[var(--color-brand-light)] to-white rounded-xl border border-[var(--color-border)] flex items-center justify-center text-9xl">
-            📟
+          <div className="aspect-square bg-white rounded-xl border border-[var(--color-border)] overflow-hidden">
+            <ProductImage
+              product={product}
+              priority
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
           </div>
         </div>
 
