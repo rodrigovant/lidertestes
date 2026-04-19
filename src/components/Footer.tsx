@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-12 grid gap-8 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-3 mb-3">
-            <Logo size={48} onDark />
+            <Logo size={58} onDark />
             <div className="font-bold text-lg">LIDERTESTES</div>
           </div>
           <p className="text-sm text-white/80">

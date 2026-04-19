@@ -23,7 +23,7 @@ export default function Header() {
 
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-3">
-          <Logo size={44} />
+          <Logo size={53} />
           <div>
             <div className="font-bold text-lg leading-tight text-[var(--color-brand-dark)]">
               LIDERTESTES
