@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { type Product } from "@/lib/data";
-import { findProductImage } from "@/lib/product-images";
 import InstrumentIllustration from "./InstrumentIllustration";
 
 type Props = {
@@ -10,14 +9,12 @@ type Props = {
 };
 
 export default function ProductImage({ product, priority, sizes }: Props) {
-  const imgSrc = findProductImage(product.slug);
-
-  if (imgSrc) {
+  if (product.imagem_url) {
     return (
       <div className="relative w-full h-full bg-white">
         <Image
-          src={imgSrc}
-          alt={product.name}
+          src={product.imagem_url}
+          alt={product.nome}
           fill
           priority={priority}
           sizes={sizes ?? "(max-width: 768px) 50vw, 25vw"}

@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { products, categories, brands, getCategory, getBrand } from "@/lib/data";
+import {
+  getProdutos,
+  getCategorias,
+  getMarcas,
+  getCategoria,
+  getMarca,
+} from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
 
 export default async function ProdutosPage({
@@ -10,41 +16,33 @@ export default async function ProdutosPage({
   const params = await searchParams;
   const { categoria, marca, busca } = params;
 
-  let filtered = products;
-  if (categoria) filtered = filtered.filter((p) => p.category === categoria);
-  if (marca) filtered = filtered.filter((p) => p.brand === marca);
-  if (busca) {
-    const q = busca.toLowerCase();
-    filtered = filtered.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.shortDescription.toLowerCase().includes(q),
-    );
-  }
-
-  const categoryInfo = categoria ? getCategory(categoria) : null;
-  const brandInfo = marca ? getBrand(marca) : null;
+  const [produtos, categorias, marcas, categoryInfo, brandInfo] =
+    await Promise.all([
+      getProdutos({ categoria, marca, busca }),
+      getCategorias(),
+      getMarcas(),
+      categoria ? getCategoria(categoria) : Promise.resolve(null),
+      marca ? getMarca(marca) : Promise.resolve(null),
+    ]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       <div className="mb-8">
         <nav className="text-sm text-[var(--color-muted)] mb-3">
-          <Link href="/" className="hover:text-[var(--color-brand)]">
-            Início
-          </Link>
+          <Link href="/" className="hover:text-[var(--color-brand)]">Início</Link>
           <span className="mx-2">/</span>
           <span className="text-[var(--color-foreground)]">Produtos</span>
         </nav>
         <h1 className="text-3xl font-bold text-[var(--color-brand-dark)]">
           {categoryInfo
-            ? categoryInfo.name
+            ? categoryInfo.nome
             : brandInfo
-              ? `Equipamentos ${brandInfo.name}`
+              ? `Equipamentos ${brandInfo.nome}`
               : "Catálogo Completo"}
         </h1>
         {categoryInfo && (
           <p className="text-[var(--color-muted)] mt-2">
-            {categoryInfo.description}
+            {categoryInfo.descricao}
           </p>
         )}
       </div>
@@ -68,7 +66,7 @@ export default async function ProdutosPage({
                   Todos os produtos
                 </Link>
               </li>
-              {categories.map((c) => (
+              {categorias.map((c) => (
                 <li key={c.slug}>
                   <Link
                     href={`/produtos?categoria=${c.slug}`}
@@ -78,7 +76,7 @@ export default async function ProdutosPage({
                         : "text-[var(--color-foreground)] hover:text-[var(--color-brand)]"
                     }`}
                   >
-                    {c.icon} {c.name}
+                    {c.icone} {c.nome}
                   </Link>
                 </li>
               ))}
@@ -90,7 +88,7 @@ export default async function ProdutosPage({
               Marcas
             </h3>
             <ul className="space-y-1.5">
-              {brands.map((b) => (
+              {marcas.map((b) => (
                 <li key={b.slug}>
                   <Link
                     href={`/produtos?marca=${b.slug}`}
@@ -100,7 +98,7 @@ export default async function ProdutosPage({
                         : "text-[var(--color-foreground)] hover:text-[var(--color-brand)]"
                     }`}
                   >
-                    {b.name}
+                    {b.nome}
                   </Link>
                 </li>
               ))}
@@ -126,14 +124,16 @@ export default async function ProdutosPage({
         <div>
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-[var(--color-muted)]">
-              {filtered.length}{" "}
-              {filtered.length === 1 ? "produto encontrado" : "produtos encontrados"}
+              {produtos.length}{" "}
+              {produtos.length === 1
+                ? "produto encontrado"
+                : "produtos encontrados"}
             </p>
           </div>
 
-          {filtered.length > 0 ? (
+          {produtos.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filtered.map((p) => (
+              {produtos.map((p) => (
                 <ProductCard key={p.slug} product={p} />
               ))}
             </div>
@@ -142,10 +142,7 @@ export default async function ProdutosPage({
               <p className="text-[var(--color-muted)] mb-4">
                 Nenhum produto encontrado com esses filtros.
               </p>
-              <Link
-                href="/produtos"
-                className="text-[var(--color-brand)] font-semibold hover:underline"
-              >
+              <Link href="/produtos" className="text-[var(--color-brand)] font-semibold hover:underline">
                 Ver todos os produtos
               </Link>
             </div>

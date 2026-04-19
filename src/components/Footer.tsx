@@ -1,8 +1,10 @@
 import Link from "next/link";
-import { categories, brands } from "@/lib/data";
+import { getCategorias, getMarcas } from "@/lib/data";
 import Logo from "./Logo";
 
-export default function Footer() {
+export default async function Footer() {
+  const [categorias, marcas] = await Promise.all([getCategorias(), getMarcas()]);
+
   return (
     <footer className="bg-[var(--color-brand-dark)] text-white mt-16">
       <div className="max-w-7xl mx-auto px-4 py-12 grid gap-8 md:grid-cols-4">
@@ -22,13 +24,10 @@ export default function Footer() {
             Categorias
           </h4>
           <ul className="space-y-2 text-sm text-white/80">
-            {categories.slice(0, 5).map((c) => (
+            {categorias.slice(0, 5).map((c) => (
               <li key={c.slug}>
-                <Link
-                  href={`/produtos?categoria=${c.slug}`}
-                  className="hover:text-white"
-                >
-                  {c.name}
+                <Link href={`/produtos?categoria=${c.slug}`} className="hover:text-white">
+                  {c.nome}
                 </Link>
               </li>
             ))}
@@ -40,13 +39,10 @@ export default function Footer() {
             Marcas
           </h4>
           <ul className="space-y-2 text-sm text-white/80">
-            {brands.slice(0, 6).map((b) => (
+            {marcas.slice(0, 6).map((b) => (
               <li key={b.slug}>
-                <Link
-                  href={`/produtos?marca=${b.slug}`}
-                  className="hover:text-white"
-                >
-                  {b.name}
+                <Link href={`/produtos?marca=${b.slug}`} className="hover:text-white">
+                  {b.nome}
                 </Link>
               </li>
             ))}
@@ -62,10 +58,7 @@ export default function Footer() {
             <li>✉️ atendimento@lidertestes.com.br</li>
             <li>🏢 Rua Exemplo, 100 — São Paulo/SP</li>
             <li className="pt-2">
-              <Link
-                href="/governo"
-                className="inline-block bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold px-3 py-1.5 rounded text-xs transition-colors"
-              >
+              <Link href="/governo" className="inline-block bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold px-3 py-1.5 rounded text-xs transition-colors">
                 Área Governo
               </Link>
             </li>

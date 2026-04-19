@@ -1,18 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  getProduct,
-  getBrand,
-  getCategory,
-  formatPrice,
-  products,
-} from "@/lib/data";
+import { getProduto, getProdutos, formatPrice } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
 import ProductImage from "@/components/ProductImage";
 
-export async function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function ProdutoPage({
   params,
@@ -20,96 +12,78 @@ export default async function ProdutoPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getProduto(slug);
   if (!product) notFound();
 
-  const brand = getBrand(product.brand);
-  const category = getCategory(product.category);
-  const related = products
-    .filter((p) => p.category === product.category && p.slug !== product.slug)
+  const related = (
+    await getProdutos({
+      categoria: product.categoria_slug ?? undefined,
+      limit: 5,
+    })
+  )
+    .filter((p) => p.slug !== product.slug)
     .slice(0, 4);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       <nav className="text-sm text-[var(--color-muted)] mb-6">
-        <Link href="/" className="hover:text-[var(--color-brand)]">
-          Início
-        </Link>
+        <Link href="/" className="hover:text-[var(--color-brand)]">Início</Link>
         <span className="mx-2">/</span>
-        <Link href="/produtos" className="hover:text-[var(--color-brand)]">
-          Produtos
-        </Link>
-        {category && (
+        <Link href="/produtos" className="hover:text-[var(--color-brand)]">Produtos</Link>
+        {product.categoria && (
           <>
             <span className="mx-2">/</span>
-            <Link
-              href={`/produtos?categoria=${category.slug}`}
-              className="hover:text-[var(--color-brand)]"
-            >
-              {category.name}
+            <Link href={`/produtos?categoria=${product.categoria.slug}`} className="hover:text-[var(--color-brand)]">
+              {product.categoria.nome}
             </Link>
           </>
         )}
         <span className="mx-2">/</span>
-        <span className="text-[var(--color-foreground)]">{product.name}</span>
+        <span className="text-[var(--color-foreground)]">{product.nome}</span>
       </nav>
 
       <div className="grid lg:grid-cols-2 gap-10 mb-16">
         <div>
           <div className="aspect-square bg-white rounded-xl border border-[var(--color-border)] overflow-hidden">
-            <ProductImage
-              product={product}
-              priority
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
+            <ProductImage product={product} priority sizes="(max-width: 1024px) 100vw, 50vw" />
           </div>
         </div>
 
         <div>
           <div className="flex items-center gap-2 mb-3">
             <span className="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand)]">
-              {brand?.name} · {brand?.country}
+              {product.marca?.nome ?? product.marca_slug} {product.marca?.pais && `· ${product.marca.pais}`}
             </span>
-            {product.condition === "seminovo" && (
+            {product.condicao === "seminovo" && (
               <span className="text-xs bg-[var(--color-accent)] text-white px-2 py-0.5 rounded">
                 Seminovo Certificado
               </span>
             )}
           </div>
 
-          <h1 className="text-3xl font-bold text-[var(--color-brand-dark)] mb-3">
-            {product.name}
-          </h1>
-          <p className="text-[var(--color-muted)] mb-6">{product.description}</p>
+          <h1 className="text-3xl font-bold text-[var(--color-brand-dark)] mb-3">{product.nome}</h1>
+          <p className="text-[var(--color-muted)] mb-6">{product.descricao}</p>
 
           <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-6 mb-6">
             <div className="flex items-baseline gap-3 mb-2">
               <span className="text-3xl font-bold text-[var(--color-brand-dark)]">
-                {formatPrice(product.price)}
+                {formatPrice(product.preco)}
               </span>
-              {product.price && (
-                <span className="text-sm text-[var(--color-muted)]">
-                  à vista
-                </span>
+              {product.preco && (
+                <span className="text-sm text-[var(--color-muted)]">à vista</span>
               )}
             </div>
             <p className="text-sm text-[var(--color-muted)] mb-4">
-              {product.stock > 0
-                ? `✅ ${product.stock} ${product.stock === 1 ? "unidade" : "unidades"} em estoque`
+              {product.estoque > 0
+                ? `✅ ${product.estoque} ${product.estoque === 1 ? "unidade" : "unidades"} em estoque`
                 : "Sob consulta — prazo estimado 15 dias úteis"}
             </p>
 
             <div className="flex flex-wrap gap-2">
-              <Link
-                href={`/contato?tipo=cotacao&produto=${product.slug}`}
-                className="flex-1 text-center bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold px-6 py-3 rounded-md transition-colors"
-              >
+              <Link href={`/contato?tipo=cotacao&produto=${product.slug}`} className="flex-1 text-center bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold px-6 py-3 rounded-md transition-colors">
                 Solicitar Cotação
               </Link>
-              <Link
-                href={`/contato?tipo=duvida&produto=${product.slug}`}
-                className="flex-1 text-center bg-white hover:bg-[var(--color-card)] border border-[var(--color-border)] text-[var(--color-foreground)] font-semibold px-6 py-3 rounded-md transition-colors"
-              >
+              <Link href={`/contato?tipo=duvida&produto=${product.slug}`} className="flex-1 text-center bg-white hover:bg-[var(--color-card)] border border-[var(--color-border)] text-[var(--color-foreground)] font-semibold px-6 py-3 rounded-md transition-colors">
                 Tirar Dúvida
               </Link>
             </div>
@@ -141,7 +115,7 @@ export default async function ProdutoPage({
             Principais Recursos
           </h2>
           <ul className="space-y-2">
-            {product.features.map((f) => (
+            {product.recursos.map((f) => (
               <li key={f} className="flex gap-2 text-sm">
                 <span className="text-[var(--color-brand)] font-bold">✓</span>
                 <span>{f}</span>
@@ -155,11 +129,8 @@ export default async function ProdutoPage({
             Especificações Técnicas
           </h2>
           <dl className="space-y-2">
-            {Object.entries(product.specs).map(([key, value]) => (
-              <div
-                key={key}
-                className="flex justify-between text-sm py-1.5 border-b border-[var(--color-border)] last:border-0"
-              >
+            {Object.entries(product.especificacoes).map(([key, value]) => (
+              <div key={key} className="flex justify-between text-sm py-1.5 border-b border-[var(--color-border)] last:border-0">
                 <dt className="text-[var(--color-muted)]">{key}</dt>
                 <dd className="font-semibold">{value}</dd>
               </div>

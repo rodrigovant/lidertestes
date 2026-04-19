@@ -1,10 +1,14 @@
 import Link from "next/link";
-import { categories, brands, products } from "@/lib/data";
+import { getCategorias, getMarcas, getProdutos } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
 import BrandLogo from "@/components/BrandLogo";
 
-export default function HomePage() {
-  const featured = products.slice(0, 4);
+export default async function HomePage() {
+  const [categorias, marcas, featured] = await Promise.all([
+    getCategorias(),
+    getMarcas(),
+    getProdutos({ limit: 4 }),
+  ]);
 
   return (
     <>
@@ -23,16 +27,10 @@ export default function HomePage() {
               e órgãos públicos.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Link
-                href="/produtos"
-                className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold px-6 py-3 rounded-md transition-colors"
-              >
+              <Link href="/produtos" className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold px-6 py-3 rounded-md transition-colors">
                 Ver Catálogo
               </Link>
-              <Link
-                href="/contato?tipo=cotacao"
-                className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-6 py-3 rounded-md transition-colors"
-              >
+              <Link href="/contato?tipo=cotacao" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-6 py-3 rounded-md transition-colors">
                 Solicitar Cotação
               </Link>
             </div>
@@ -59,10 +57,7 @@ export default function HomePage() {
                 { emoji: "📡", label: "RF / Microondas" },
                 { emoji: "🎯", label: "Calibradores" },
               ].map((item) => (
-                <div
-                  key={item.label}
-                  className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6 text-center"
-                >
+                <div key={item.label} className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6 text-center">
                   <div className="text-4xl mb-2">{item.emoji}</div>
                   <div className="text-sm font-semibold">{item.label}</div>
                 </div>
@@ -83,15 +78,11 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.map((c) => (
-              <Link
-                key={c.slug}
-                href={`/produtos?categoria=${c.slug}`}
-                className="bg-white border border-[var(--color-border)] rounded-lg p-4 text-center hover:border-[var(--color-brand)] hover:shadow-md transition-all"
-              >
-                <div className="text-4xl mb-2">{c.icon}</div>
+            {categorias.map((c) => (
+              <Link key={c.slug} href={`/produtos?categoria=${c.slug}`} className="bg-white border border-[var(--color-border)] rounded-lg p-4 text-center hover:border-[var(--color-brand)] hover:shadow-md transition-all">
+                <div className="text-4xl mb-2">{c.icone}</div>
                 <div className="text-sm font-semibold text-[var(--color-brand-dark)]">
-                  {c.name}
+                  {c.nome}
                 </div>
               </Link>
             ))}
@@ -110,10 +101,7 @@ export default function HomePage() {
                 Seleção dos equipamentos mais procurados.
               </p>
             </div>
-            <Link
-              href="/produtos"
-              className="text-sm font-semibold text-[var(--color-brand)] hover:underline hidden sm:block"
-            >
+            <Link href="/produtos" className="text-sm font-semibold text-[var(--color-brand)] hover:underline hidden sm:block">
               Ver todos →
             </Link>
           </div>
@@ -132,36 +120,16 @@ export default function HomePage() {
               Nossos Serviços
             </h2>
             <p className="text-[var(--color-muted)]">
-              Muito além da venda — soluções completas para o ciclo de vida do seu
-              equipamento.
+              Muito além da venda — soluções completas para o ciclo de vida do seu equipamento.
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              {
-                icon: "🎯",
-                title: "Calibração ISO/IEC 17025",
-                desc: "Laboratório acreditado com rastreabilidade ao INMETRO. Certificados reconhecidos em todo o território nacional.",
-                href: "/servicos/calibracao",
-              },
-              {
-                icon: "🔧",
-                title: "Manutenção e Reparo",
-                desc: "Assistência técnica autorizada para as principais marcas do mercado. Orçamento prévio e garantia de 90 dias.",
-                href: "/servicos/manutencao",
-              },
-              {
-                icon: "📦",
-                title: "Aluguel de Equipamentos",
-                desc: "Programa de locação flexível para projetos pontuais, com opção de compra ao final do contrato.",
-                href: "/servicos/aluguel",
-              },
+              { icon: "🎯", title: "Calibração ISO/IEC 17025", desc: "Laboratório acreditado com rastreabilidade ao INMETRO. Certificados reconhecidos em todo o território nacional.", href: "/servicos/calibracao" },
+              { icon: "🔧", title: "Manutenção e Reparo", desc: "Assistência técnica autorizada para as principais marcas do mercado. Orçamento prévio e garantia de 90 dias.", href: "/servicos/manutencao" },
+              { icon: "📦", title: "Aluguel de Equipamentos", desc: "Programa de locação flexível para projetos pontuais, com opção de compra ao final do contrato.", href: "/servicos/aluguel" },
             ].map((s) => (
-              <Link
-                key={s.title}
-                href={s.href}
-                className="bg-white rounded-xl p-6 border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:shadow-lg transition-all"
-              >
+              <Link key={s.title} href={s.href} className="bg-white rounded-xl p-6 border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:shadow-lg transition-all">
                 <div className="text-4xl mb-3">{s.icon}</div>
                 <h3 className="font-bold text-lg text-[var(--color-brand-dark)] mb-2">
                   {s.title}
@@ -187,7 +155,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-            {brands.map((b) => (
+            {marcas.map((b) => (
               <BrandLogo key={b.slug} brand={b} />
             ))}
           </div>
@@ -201,10 +169,7 @@ export default function HomePage() {
             Atendimento especializado para órgãos públicos: cadastro SICAF, pregão
             eletrônico, documentação completa e preços diferenciados.
           </p>
-          <Link
-            href="/governo"
-            className="inline-block bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold px-8 py-3 rounded-md transition-colors"
-          >
+          <Link href="/governo" className="inline-block bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold px-8 py-3 rounded-md transition-colors">
             Acessar Área Governo
           </Link>
         </div>

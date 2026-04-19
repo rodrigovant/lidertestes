@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getProduct } from "@/lib/data";
+import { getProduto } from "@/lib/data";
 
 const tipoLabels: Record<string, string> = {
   cotacao: "Solicitar Cotação",
@@ -24,7 +24,7 @@ export default async function ContatoPage({
 }) {
   const params = await searchParams;
   const tipo = params.tipo && params.tipo in tipoLabels ? params.tipo : "cotacao";
-  const produto = params.produto ? getProduct(params.produto) : null;
+  const produto = params.produto ? await getProduto(params.produto) : null;
   const tituloTipo = tipoLabels[tipo];
 
   return (
@@ -48,58 +48,30 @@ export default async function ContatoPage({
           <input type="hidden" name="tipo_atendimento" value={tituloTipo} />
           {produto && (
             <div className="bg-[var(--color-brand-light)] border border-[var(--color-brand)]/30 rounded-md p-3 text-sm">
-              <span className="font-semibold">Produto:</span> {produto.name}
-              <input type="hidden" name="produto" value={produto.name} />
+              <span className="font-semibold">Produto:</span> {produto.nome}
+              <input type="hidden" name="produto" value={produto.nome} />
             </div>
           )}
 
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold mb-1">
-                Nome completo *
-              </label>
-              <input
-                name="nome"
-                required
-                defaultValue={params.nome}
-                className="w-full border border-[var(--color-border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brand)]"
-              />
+              <label className="block text-sm font-semibold mb-1">Nome completo *</label>
+              <input name="nome" required defaultValue={params.nome} className="w-full border border-[var(--color-border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brand)]" />
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-1">
-                E-mail *
-              </label>
-              <input
-                type="email"
-                name="email"
-                required
-                defaultValue={params.email}
-                className="w-full border border-[var(--color-border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brand)]"
-              />
+              <label className="block text-sm font-semibold mb-1">E-mail *</label>
+              <input type="email" name="email" required defaultValue={params.email} className="w-full border border-[var(--color-border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brand)]" />
             </div>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold mb-1">
-                Telefone / WhatsApp *
-              </label>
-              <input
-                name="telefone"
-                required
-                placeholder="(11) 90000-0000"
-                className="w-full border border-[var(--color-border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brand)]"
-              />
+              <label className="block text-sm font-semibold mb-1">Telefone / WhatsApp *</label>
+              <input name="telefone" required placeholder="(11) 90000-0000" className="w-full border border-[var(--color-border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brand)]" />
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-1">
-                Empresa / Órgão
-              </label>
-              <input
-                name="empresa"
-                defaultValue={params.orgao}
-                className="w-full border border-[var(--color-border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brand)]"
-              />
+              <label className="block text-sm font-semibold mb-1">Empresa / Órgão</label>
+              <input name="empresa" defaultValue={params.orgao} className="w-full border border-[var(--color-border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brand)]" />
             </div>
           </div>
 
@@ -107,24 +79,12 @@ export default async function ContatoPage({
             <label className="block text-sm font-semibold mb-1">
               CNPJ {tipo === "governo" && "*"}
             </label>
-            <input
-              name="cnpj"
-              required={tipo === "governo"}
-              defaultValue={params.cnpj}
-              placeholder="00.000.000/0001-00"
-              className="w-full border border-[var(--color-border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brand)]"
-            />
+            <input name="cnpj" required={tipo === "governo"} defaultValue={params.cnpj} placeholder="00.000.000/0001-00" className="w-full border border-[var(--color-border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brand)]" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold mb-1">Mensagem *</label>
-            <textarea
-              name="mensagem"
-              required
-              rows={6}
-              placeholder="Descreva o que precisa: modelo, quantidade, prazo, etc."
-              className="w-full border border-[var(--color-border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brand)]"
-            />
+            <textarea name="mensagem" required rows={6} placeholder="Descreva o que precisa: modelo, quantidade, prazo, etc." className="w-full border border-[var(--color-border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brand)]" />
           </div>
 
           <label className="flex items-start gap-2 text-sm">
@@ -134,10 +94,7 @@ export default async function ContatoPage({
             </span>
           </label>
 
-          <button
-            type="submit"
-            className="w-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold px-6 py-3 rounded-md transition-colors"
-          >
+          <button type="submit" className="w-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold px-6 py-3 rounded-md transition-colors">
             Enviar Solicitação
           </button>
         </form>
@@ -154,9 +111,7 @@ export default async function ContatoPage({
           </div>
 
           <div className="bg-white border border-[var(--color-border)] rounded-xl p-6">
-            <h3 className="font-bold text-[var(--color-brand-dark)] mb-3">
-              Horário de atendimento
-            </h3>
+            <h3 className="font-bold text-[var(--color-brand-dark)] mb-3">Horário de atendimento</h3>
             <ul className="text-sm space-y-1 text-[var(--color-muted)]">
               <li>Seg–Sex · 08h–18h</li>
               <li>Sábado · 09h–13h</li>
@@ -164,14 +119,10 @@ export default async function ContatoPage({
           </div>
 
           <div className="bg-[var(--color-brand-light)] border border-[var(--color-brand)]/20 rounded-xl p-6">
-            <h3 className="font-bold text-[var(--color-brand-dark)] mb-2">
-              Endereço
-            </h3>
+            <h3 className="font-bold text-[var(--color-brand-dark)] mb-2">Endereço</h3>
             <p className="text-sm text-[var(--color-muted)]">
-              Rua Exemplo, 100
-              <br />
-              Sala 01 · São Paulo / SP
-              <br />
+              Rua Exemplo, 100<br />
+              Sala 01 · São Paulo / SP<br />
               CEP 00000-000
             </p>
           </div>
@@ -180,10 +131,7 @@ export default async function ContatoPage({
             <div className="bg-white border border-[var(--color-border)] rounded-xl p-6">
               <p className="text-sm text-[var(--color-muted)]">
                 Você também pode acessar diretamente a{" "}
-                <Link
-                  href="/governo"
-                  className="text-[var(--color-brand)] font-semibold hover:underline"
-                >
+                <Link href="/governo" className="text-[var(--color-brand)] font-semibold hover:underline">
                   Área Governo
                 </Link>{" "}
                 para mais informações.

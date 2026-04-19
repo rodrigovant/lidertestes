@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { type Product, formatPrice, getBrand } from "@/lib/data";
+import { type Product, formatPrice } from "@/lib/data";
 import ProductImage from "./ProductImage";
 
 export default function ProductCard({ product }: { product: Product }) {
-  const brand = getBrand(product.brand);
   return (
     <Link
       href={`/produtos/${product.slug}`}
@@ -15,26 +14,28 @@ export default function ProductCard({ product }: { product: Product }) {
       <div className="p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand)]">
-            {brand?.name}
+            {product.marca?.nome ?? product.marca_slug}
           </span>
-          {product.condition === "seminovo" && (
+          {product.condicao === "seminovo" && (
             <span className="text-xs bg-[var(--color-accent)] text-white px-2 py-0.5 rounded">
               Seminovo
             </span>
           )}
         </div>
         <h3 className="font-semibold text-sm mb-1 group-hover:text-[var(--color-brand)] line-clamp-2">
-          {product.name}
+          {product.nome}
         </h3>
         <p className="text-xs text-[var(--color-muted)] mb-3 line-clamp-2">
-          {product.shortDescription}
+          {product.descricao_curta}
         </p>
         <div className="flex items-end justify-between">
           <span className="font-bold text-[var(--color-brand-dark)]">
-            {formatPrice(product.price)}
+            {formatPrice(product.preco)}
           </span>
           <span className="text-xs text-[var(--color-muted)]">
-            {product.stock > 0 ? `${product.stock} em estoque` : "Sob consulta"}
+            {product.estoque > 0
+              ? `${product.estoque} em estoque`
+              : "Sob consulta"}
           </span>
         </div>
       </div>
