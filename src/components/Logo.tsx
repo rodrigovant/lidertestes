@@ -9,13 +9,12 @@ export default function Logo({
   variant = "color",
   className = "",
 }: LogoProps) {
-  const bgGradId = `lt-bg-${variant}`;
+  const gradId = `lt-wave-${variant}`;
   const isWhite = variant === "white";
 
-  const bgStart = isWhite ? "#ffffff" : "#0a4da2";
-  const bgEnd = isWhite ? "#e8f0fb" : "#073873";
-  const letterColor = isWhite ? "#0a4da2" : "#ffffff";
-  const accent = "#f97316";
+  const navy = "#1e3a5f";
+  const orange = "#e8722e";
+  const bg = isWhite ? "#ffffff" : "#f5f7fa";
 
   return (
     <svg
@@ -28,42 +27,33 @@ export default function Logo({
       role="img"
     >
       <defs>
-        <linearGradient id={bgGradId} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor={bgStart} />
-          <stop offset="1" stopColor={bgEnd} />
+        <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor={navy} />
+          <stop offset="0.45" stopColor={navy} />
+          <stop offset="0.55" stopColor={orange} />
+          <stop offset="1" stopColor={orange} />
         </linearGradient>
       </defs>
 
-      <rect width="100" height="100" rx="20" fill={`url(#${bgGradId})`} />
+      <rect width="100" height="100" rx="14" fill={bg} />
 
-      <g fill={letterColor}>
-        <rect x="20" y="24" width="9" height="42" rx="1.5" />
-        <rect x="20" y="57" width="24" height="9" rx="1.5" />
-
-        <rect x="52" y="24" width="30" height="9" rx="1.5" />
-        <rect x="62" y="24" width="10" height="42" rx="1.5" />
+      <g fill={navy}>
+        <rect x="18" y="20" width="12" height="24" rx="1.5" />
+        <rect x="18" y="56" width="12" height="22" rx="1.5" />
+        <rect x="33" y="65" width="20" height="13" rx="1.5" />
       </g>
 
-      <circle cx="82" cy="22" r="4" fill={accent} />
-      <circle cx="82" cy="22" r="4" fill={accent} opacity="0.4">
-        <animate
-          attributeName="r"
-          values="4;7;4"
-          dur="2.2s"
-          repeatCount="indefinite"
-        />
-        <animate
-          attributeName="opacity"
-          values="0.5;0;0.5"
-          dur="2.2s"
-          repeatCount="indefinite"
-        />
-      </circle>
+      <g fill={orange}>
+        <rect x="55" y="20" width="14" height="14" rx="1.5" />
+        <rect x="72" y="20" width="14" height="14" rx="1.5" />
+        <rect x="63" y="38" width="12" height="10" rx="1.5" />
+        <rect x="63" y="56" width="12" height="22" rx="1.5" />
+      </g>
 
       <path
-        d="M 14 82 L 24 82 L 29 74 L 39 90 L 49 82 L 56 82 L 61 76 L 67 82 L 86 82"
-        stroke={accent}
-        strokeWidth="2.5"
+        d="M 10 52 Q 20 44 30 52 Q 40 60 50 52 Q 60 44 70 52 Q 80 60 90 52"
+        stroke={`url(#${gradId})`}
+        strokeWidth="3.5"
         fill="none"
         strokeLinecap="round"
         strokeLinejoin="round"
